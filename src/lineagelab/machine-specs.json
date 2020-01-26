@@ -1,0 +1,14 @@
+{
+  "Satchmo" : {
+  	"OS" : "Ubuntu 16.04",
+  	"CPU" : "Intel Xeon quad-core 2.66 GHz"
+  },
+  "Kuujjuaq" : {
+  	"OS" : "Ubuntu 18.04",
+  	"CPU" : "AMD Athlon II X4 640 1.8 GHz"
+  },
+  "Symphorien" : {
+  	"OS" : "Ubuntu 18.04",
+  	"CPU" : "Intel CORE i5-7200U 2.5 GHz"
+  }
+}

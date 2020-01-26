@@ -1,0 +1,23 @@
+<p><a href="https://liflab.github.io/beepbeep-3">BeepBeep</a> is an open
+source event stream processing engine. It has recently been extended with
+<strong>data lineage</strong> functionalities, which allow an output result
+to be "explained" by retracing the inputs that have contributed to the
+production of a given output.</p>
+
+<p>This benchmark contains a set of experiments aimed at assessing the
+overhead incurred by the use of these lineage functionalities, compared with
+the original mode of processing. It focuses on the slowdown caused by
+the handling of lineage information, as well as on the added memory
+consumption. In order to do so, the benchmark defines a number of BeepBeep
+processor chains (called "stream queries"), evaluates them on randomly
+generated input streams (both with and without lineage tracking), and
+compares their throughput and memory consumption.</p>
+
+<p>The results in this benchmark are discussed in the following publication:</p>
+
+<blockquote>
+S. Hallé. (2020). <i>Explainable Queries on Event Logs</i>. Submitted to
+IEEE World Congress on Computational Intelligence (WCCI) 2020,
+Special Session on Advanced Event-data Analytics Solutions for
+Understanding and Improving Complex Processes (AEA4CP).
+</blockquote>
