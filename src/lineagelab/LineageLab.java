@@ -17,7 +17,6 @@
  */
 package lineagelab;
 
-import ca.uqac.lif.cep.Pullable;
 import ca.uqac.lif.json.JsonFalse;
 import ca.uqac.lif.json.JsonTrue;
 import ca.uqac.lif.labpal.Laboratory;
@@ -37,7 +36,7 @@ import lineagelab.macros.MaxLines;
 import lineagelab.macros.OverheadMacro;
 import lineagelab.properties.ProcessLifecycle;
 import lineagelab.properties.WindowProduct;
-import lineagelab.source.ProcessSource;
+import lineagelab.tables.AveragePerEvent;
 import lineagelab.tables.LabelledVersusTable;
 
 import static lineagelab.StreamExperiment.LENGTH;
@@ -75,7 +74,7 @@ public class LineageLab extends Laboratory
    * An experiment factory
    */
   public transient StreamExperimentFactory m_factory = new StreamExperimentFactory(this);
-  
+
   public static final transient String NO_TRACKER = "No tracker";
   public static final transient String WITH_TRACKER = "With tracker";
 
@@ -100,7 +99,7 @@ public class LineageLab extends Laboratory
       t_time_comp_vs.setTitle("Comparison of throughput (vs)");
       t_time_comp_vs.setNickname("tCompTimeVs");
       add(t_time_comp_vs);
-      
+
       LabelledVersusTable t_mem_comp = new LabelledVersusTable(PROPERTY, MAX_MEMORY, NO_TRACKER, WITH_TRACKER);
       t_mem_comp.setTitle("Comparison of memory consumption");
       t_mem_comp.setNickname("ttCompMem");
@@ -109,12 +108,12 @@ public class LineageLab extends Laboratory
       t_mem_comp_vs.setTitle("Comparison of memory consumption (vs)");
       t_mem_comp_vs.setNickname("tCompMemVs");
       add(t_mem_comp_vs);
-      
-      ExperimentTable t_mem_per = new ExperimentTable(PROPERTY, MEM_PER_EVENT);
+
+      AveragePerEvent t_mem_per = new AveragePerEvent();
       t_mem_per.setNickname("tMemPerEvent");
       t_mem_per.setTitle("Average amount of memory consumed per event");
       add(t_mem_per);
-      
+
       for (Region r : big_r.all(PROPERTY))
       {
         Region r_with = new Region(r);
@@ -127,7 +126,7 @@ public class LineageLab extends Laboratory
         t_mem_comp_vs.add(e_without, e_with);
         t_time_comp.add(r.getString(PROPERTY), e_without, e_with);
         t_mem_comp.add(r.getString(PROPERTY), e_without, e_with);
-        t_mem_per.add(e_with);
+        t_mem_per.add(e_without, e_with);
       }
       Scatterplot time_plot = new Scatterplot(t_time_comp_vs);
       time_plot.setTitle(t_time_comp_vs.getTitle());
@@ -141,51 +140,55 @@ public class LineageLab extends Laboratory
       mem_plot.setCaption(Axis.X, NO_TRACKER);
       mem_plot.setCaption(Axis.Y, WITH_TRACKER);
       add(mem_plot);
-      
+
       // Average and maximum overhead
       add(new OverheadMacro(this, t_mem_comp_vs, t_time_comp_vs));
     }
-    
+
     {
       // Throughput and memory plot for a single experiment
-      Region r = new Region(big_r);
-      r.set(PROPERTY, WindowProduct.NAME);
-      Region r_with = new Region(r);
-      r_with.set(LINEAGE, JsonTrue.instance);
-      StreamExperiment<?> e_with = m_factory.get(r_with);
-      Region r_without = new Region(r);
-      r_without.set(LINEAGE, JsonFalse.instance);
-      StreamExperiment<?> e_without = m_factory.get(r_without);
-      ExperimentTable e_mem = new ExperimentTable(LENGTH, LINEAGE, MEMORY);
-      e_mem.setShowInList(false);
-      e_mem.add(e_with);
-      e_mem.add(e_without);
-      TransformedTable te_mem = new TransformedTable(new Composition(new ExpandAsColumns(LINEAGE, MEMORY), new RenameColumns(LENGTH, "With tracker", "No tracker")), e_mem);
-      te_mem.setTitle("Comparison of memory consumption for the property Window Average");
-      te_mem.setNickname("ttMemWinAvg");
-      add(e_mem, te_mem);
-      Scatterplot plot_mem = new Scatterplot(te_mem);
-      plot_mem.setTitle(te_mem.getTitle());
-      plot_mem.setCaption(Axis.X, "Length");
-      plot_mem.setCaption(Axis.Y, "Memory (B)");
-      plot_mem.setNickname("pMemWinAvg");
-      add(plot_mem);
-      ExperimentTable e_tp = new ExperimentTable(LENGTH, LINEAGE, TIME);
-      e_tp.setShowInList(false);
-      e_tp.add(e_with);
-      e_tp.add(e_without);
-      TransformedTable te_tp = new TransformedTable(new Composition(new ExpandAsColumns(LINEAGE, TIME), new RenameColumns(LENGTH, "With tracker", "No tracker")), e_tp);
-      te_tp.setTitle("Comparison of throughput for the property Window Average");
-      te_tp.setNickname("ttTpWinAvg");
-      add(e_tp, te_tp);
-      Scatterplot plot_tp = new Scatterplot(te_tp);
-      plot_tp.setTitle(te_tp.getTitle());
-      plot_tp.setCaption(Axis.X, "Length");
-      plot_tp.setCaption(Axis.Y, "Time (ms)");
-      plot_tp.setNickname("pTpWinAvg");
-      add(plot_tp);
-      
-      add(new MaxLines(this, e_with));
+      for (Region r : big_r.all(StreamExperiment.PROPERTY))
+      {
+        //r.add(PROPERTY, WindowProduct.NAME);
+        Region r_with = new Region(r);
+        r_with.add(LINEAGE, JsonTrue.instance);
+        StreamExperiment<?> e_with = m_factory.get(r_with);
+        Region r_without = new Region(r);
+        r_without.set(LINEAGE, JsonFalse.instance);
+        StreamExperiment<?> e_without = m_factory.get(r_without);
+        ExperimentTable e_mem = new ExperimentTable(LENGTH, LINEAGE, MEMORY);
+        e_mem.setShowInList(false);
+        e_mem.add(e_with);
+        e_mem.add(e_without);
+        TransformedTable te_mem = new TransformedTable(new Composition(new ExpandAsColumns(LINEAGE, MEMORY), new RenameColumns(LENGTH, "With tracker", "No tracker")), e_mem);
+        te_mem.setTitle("Comparison of memory consumption for the property " + r.getString(PROPERTY));
+        s_nicknamer.setNickname(te_mem, r, "ttMem", "");
+        add(e_mem, te_mem);
+        Scatterplot plot_mem = new Scatterplot(te_mem);
+        plot_mem.setTitle(te_mem.getTitle());
+        plot_mem.setCaption(Axis.X, "Length");
+        plot_mem.setCaption(Axis.Y, "Memory (B)");
+        plot_mem.setNickname("pMemWinAvg");
+        add(plot_mem);
+        ExperimentTable e_tp = new ExperimentTable(LENGTH, LINEAGE, TIME);
+        e_tp.setShowInList(false);
+        e_tp.add(e_with);
+        e_tp.add(e_without);
+        TransformedTable te_tp = new TransformedTable(new Composition(new ExpandAsColumns(LINEAGE, TIME), new RenameColumns(LENGTH, "With tracker", "No tracker")), e_tp);
+        te_tp.setTitle("Comparison of throughput for the property Window product" + r.getString(PROPERTY));
+        s_nicknamer.setNickname(te_tp, r, "ttTp", "");
+        add(e_tp, te_tp);
+        Scatterplot plot_tp = new Scatterplot(te_tp);
+        plot_tp.setTitle(te_tp.getTitle());
+        plot_tp.setCaption(Axis.X, "Length");
+        plot_tp.setCaption(Axis.Y, "Time (ms)");
+        plot_tp.setNickname("pTpWinAvg");
+        add(plot_tp);
+        if (r.getString(PROPERTY).compareTo(WindowProduct.NAME) == 0)
+        {
+          add(new MaxLines(this, e_with));
+        }
+      }
     }
 
     // Macros
