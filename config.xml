@@ -106,5 +106,16 @@
         <jar>https://github.com/sylvainhalle/Azrael/releases/download/v2.0/azrael-size.jar</jar>
       </files>
     </dependency>
+    <dependency>                                    
+      <!--
+      Synthia
+      -->
+      <name>Synthia</name>
+      <classname>ca.uqac.lif.synthia.Picker</classname>
+      <bundle>true</bundle>
+      <files>
+        <jar>https://github.com/liflab/synthia/releases/download/v0.1/synthia.jar</jar>
+      </files>
+    </dependency>
   </dependencies>
 </build>

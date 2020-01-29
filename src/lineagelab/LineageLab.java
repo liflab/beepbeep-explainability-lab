@@ -17,6 +17,7 @@
  */
 package lineagelab;
 
+import ca.uqac.lif.cep.Pullable;
 import ca.uqac.lif.json.JsonFalse;
 import ca.uqac.lif.json.JsonTrue;
 import ca.uqac.lif.labpal.Laboratory;
@@ -34,7 +35,9 @@ import ca.uqac.lif.mtnp.table.TransformedTable;
 import lineagelab.macros.LabStats;
 import lineagelab.macros.MaxLines;
 import lineagelab.macros.OverheadMacro;
+import lineagelab.properties.ProcessLifecycle;
 import lineagelab.properties.WindowProduct;
+import lineagelab.source.ProcessSource;
 import lineagelab.tables.LabelledVersusTable;
 
 import static lineagelab.StreamExperiment.LENGTH;
@@ -85,7 +88,7 @@ public class LineageLab extends Laboratory
 
     Region big_r = new Region();
     big_r.add(LINEAGE, JsonTrue.instance, JsonFalse.instance);
-    big_r.add(PROPERTY, WindowProduct.NAME);
+    big_r.add(PROPERTY, WindowProduct.NAME, ProcessLifecycle.NAME);
 
     {
       // Comparison of time and memory with/without tracking

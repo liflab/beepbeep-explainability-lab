@@ -23,7 +23,9 @@ import ca.uqac.lif.cep.provenance.IndexEventTracker;
 import ca.uqac.lif.json.JsonTrue;
 import ca.uqac.lif.labpal.ExperimentFactory;
 import ca.uqac.lif.labpal.Region;
+import lineagelab.properties.ProcessLifecycle;
 import lineagelab.properties.WindowProduct;
+import lineagelab.source.ProcessSource;
 import lineagelab.source.RandomNumberSource;
 
 import static lineagelab.StreamExperiment.LINEAGE;
@@ -71,6 +73,10 @@ public class StreamExperimentFactory extends ExperimentFactory<LineageLab,Stream
     {
       exp.setSource(new RandomNumberSource(m_lab.getRandom(), LineageLab.MAX_TRACE_LENGTH));
     }
+    if (property_name.compareTo(ProcessLifecycle.NAME) == 0)
+    {
+      exp.setSource(new ProcessSource(m_lab.getRandom(), LineageLab.MAX_TRACE_LENGTH, 100));
+    }
   }
 
   protected Processor setProcessor(StreamExperiment exp, Region r, boolean lineage)
@@ -91,6 +97,10 @@ public class StreamExperimentFactory extends ExperimentFactory<LineageLab,Stream
     {
       p = new WindowProduct(t);
     }
+    if (property_name.compareTo(ProcessLifecycle.NAME) == 0)
+    {
+      p = new ProcessLifecycle(t);
+    }
     exp.setProcessor(p);
     return p;
   }
@@ -105,6 +115,10 @@ public class StreamExperimentFactory extends ExperimentFactory<LineageLab,Stream
     if (property_name.compareTo(WindowProduct.NAME) == 0)
     {
       return "It computes a product over a sliding window of numbers.";
+    }
+    if (property_name.compareTo(ProcessLifecycle.NAME) == 0)
+    {
+      return "It checks that each process instance follows a lifecycle defined by a Moore machine.";
     }
     return null;
   }
