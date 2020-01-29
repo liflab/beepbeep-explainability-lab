@@ -19,10 +19,10 @@ package lineagelab.source;
 
 import ca.uqac.lif.cep.Processor;
 import ca.uqac.lif.labpal.Random;
-import ca.uqac.lif.synthia.Picker;
 import ca.uqac.lif.synthia.random.RandomFloat;
 import ca.uqac.lif.synthia.sequence.Interleave;
 import ca.uqac.lif.synthia.sequence.MarkovChain;
+import ca.uqac.lif.synthia.util.ArrayPicker;
 import ca.uqac.lif.synthia.util.Constant;
 import ca.uqac.lif.synthia.util.Freeze;
 import ca.uqac.lif.synthia.util.Tick;
@@ -81,48 +81,6 @@ public class ProcessSource extends RandomSource<Object[]>
   public Processor duplicate(boolean with_state)
   {
     return new ProcessSource(m_random, m_numEvents, m_numInstances, m_interleave.duplicate(with_state));
-  }
-  
-  protected static class ArrayPicker implements Picker<Object[]>
-  {
-    protected Picker<?>[] m_pickers;
-    
-    public ArrayPicker(Picker<?> ... pickers)
-    {
-      super();
-      m_pickers = pickers;
-    }
-    
-    @Override
-    public Picker<Object[]> duplicate(boolean with_state)
-    {
-      Picker<?>[] duplicates = new Picker<?>[m_pickers.length];
-      for (int i = 0; i < m_pickers.length; i++)
-      {
-        duplicates[i] = m_pickers[i].duplicate(with_state);
-      }
-      return new ArrayPicker(duplicates);
-    }
-
-    @Override
-    public Object[] pick()
-    {
-      Object[] out = new Object[m_pickers.length];
-      for (int i = 0; i < m_pickers.length; i++)
-      {
-        out[i] = m_pickers[i].pick();
-      }
-      return out;
-    }
-
-    @Override
-    public void reset()
-    {
-      for (int i = 0; i < m_pickers.length; i++)
-      {
-        m_pickers[i].reset();
-      }
-    }
   }
   
   protected static class GlobalTick extends Tick
