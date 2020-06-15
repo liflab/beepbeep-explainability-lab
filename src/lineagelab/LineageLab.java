@@ -34,6 +34,9 @@ import ca.uqac.lif.mtnp.table.TransformedTable;
 import lineagelab.macros.LabStats;
 import lineagelab.macros.MaxLines;
 import lineagelab.macros.OverheadMacro;
+import lineagelab.properties.CvcProcedure;
+import lineagelab.properties.LtlProperty;
+import lineagelab.properties.Payment;
 import lineagelab.properties.ProcessLifecycle;
 import lineagelab.properties.WindowProduct;
 import lineagelab.tables.AveragePerEvent;
@@ -87,7 +90,7 @@ public class LineageLab extends Laboratory
 
     Region big_r = new Region();
     big_r.add(LINEAGE, JsonTrue.instance, JsonFalse.instance);
-    big_r.add(PROPERTY, WindowProduct.NAME, ProcessLifecycle.NAME);
+    big_r.add(PROPERTY, WindowProduct.NAME, ProcessLifecycle.NAME, LtlProperty.NAME, CvcProcedure.NAME, Payment.NAME);
 
     {
       // Comparison of time and memory with/without tracking
@@ -168,7 +171,7 @@ public class LineageLab extends Laboratory
         plot_mem.setTitle(te_mem.getTitle());
         plot_mem.setCaption(Axis.X, "Length");
         plot_mem.setCaption(Axis.Y, "Memory (B)");
-        plot_mem.setNickname("pMemWinAvg");
+        s_nicknamer.setNickname(plot_mem, r, "pMem", "");
         add(plot_mem);
         ExperimentTable e_tp = new ExperimentTable(LENGTH, LINEAGE, TIME);
         e_tp.setShowInList(false);
@@ -182,7 +185,7 @@ public class LineageLab extends Laboratory
         plot_tp.setTitle(te_tp.getTitle());
         plot_tp.setCaption(Axis.X, "Length");
         plot_tp.setCaption(Axis.Y, "Time (ms)");
-        plot_tp.setNickname("pTpWinAvg");
+        s_nicknamer.setNickname(plot_tp, r, "pTp", "");
         add(plot_tp);
         if (r.getString(PROPERTY).compareTo(WindowProduct.NAME) == 0)
         {

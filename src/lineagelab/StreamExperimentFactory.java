@@ -23,10 +23,15 @@ import ca.uqac.lif.cep.provenance.IndexEventTracker;
 import ca.uqac.lif.json.JsonTrue;
 import ca.uqac.lif.labpal.ExperimentFactory;
 import ca.uqac.lif.labpal.Region;
+import lineagelab.properties.CvcProcedure;
+import lineagelab.properties.LtlProperty;
+import lineagelab.properties.Payment;
 import lineagelab.properties.ProcessLifecycle;
 import lineagelab.properties.WindowProduct;
+import lineagelab.source.CvcSource;
 import lineagelab.source.ProcessSource;
 import lineagelab.source.RandomNumberSource;
+import lineagelab.source.XesSource;
 
 import static lineagelab.StreamExperiment.LINEAGE;
 import static lineagelab.StreamExperiment.PROPERTY;
@@ -77,6 +82,18 @@ public class StreamExperimentFactory extends ExperimentFactory<LineageLab,Stream
     {
       exp.setSource(new ProcessSource(m_lab.getRandom(), LineageLab.MAX_TRACE_LENGTH, 100));
     }
+    if (property_name.compareTo(LtlProperty.NAME) == 0)
+    {
+      exp.setSource(new ProcessSource(m_lab.getRandom(), LineageLab.MAX_TRACE_LENGTH, 100));
+    }
+    if (property_name.compareTo(CvcProcedure.NAME) == 0)
+    {
+      exp.setSource(new CvcSource(LineageLab.MAX_TRACE_LENGTH));
+    }
+    if (property_name.compareTo(Payment.NAME) == 0)
+    {
+      exp.setSource(new XesSource(LineageLab.MAX_TRACE_LENGTH));
+    }
   }
 
   protected Processor setProcessor(StreamExperiment exp, Region r, boolean lineage)
@@ -101,6 +118,18 @@ public class StreamExperimentFactory extends ExperimentFactory<LineageLab,Stream
     {
       p = new ProcessLifecycle(t);
     }
+    if (property_name.compareTo(LtlProperty.NAME) == 0)
+    {
+      p = new LtlProperty(t);
+    }
+    if (property_name.compareTo(CvcProcedure.NAME) == 0)
+    {
+      p = new CvcProcedure(t);
+    }
+    if (property_name.compareTo(Payment.NAME) == 0)
+    {
+      p = new Payment(t);
+    }
     exp.setProcessor(p);
     return p;
   }
@@ -119,6 +148,14 @@ public class StreamExperimentFactory extends ExperimentFactory<LineageLab,Stream
     if (property_name.compareTo(ProcessLifecycle.NAME) == 0)
     {
       return "It checks that each process instance follows a lifecycle defined by a Moore machine.";
+    }
+    if (property_name.compareTo(CvcProcedure.NAME) == 0)
+    {
+      return "It checks that a log of actions follows the procedure for installing a Central Veinous Catheter.";
+    }
+    if (property_name.compareTo(Payment.NAME) == 0)
+    {
+      return "It checks the maximum duration of a payment process instance.";
     }
     return null;
   }

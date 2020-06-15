@@ -20,6 +20,7 @@ package lineagelab.source;
 import ca.uqac.lif.cep.Processor;
 import ca.uqac.lif.labpal.Random;
 import ca.uqac.lif.synthia.random.RandomFloat;
+import ca.uqac.lif.synthia.random.RandomInteger;
 import ca.uqac.lif.synthia.sequence.Interleave;
 import ca.uqac.lif.synthia.sequence.MarkovChain;
 import ca.uqac.lif.synthia.util.ArrayPicker;
@@ -38,7 +39,7 @@ public class ProcessSource extends RandomSource<Object[]>
     super(r, num_events);
     m_numInstances = num_instances;
     m_interleave = new Interleave<Object[]>(new RandomFloat(), 1, 0.5);
-    ArrayPicker ap = new ArrayPicker(new Freeze<Number>(new GlobalTick()), getMarkovChain());
+    ArrayPicker ap = new ArrayPicker(new Freeze<Number>(new GlobalTick()), getMarkovChain(), new RandomInteger(-10, 10));
     m_interleave.add(ap, 1);
   }
   

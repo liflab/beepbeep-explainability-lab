@@ -148,22 +148,7 @@ public class StreamExperiment<T> extends Experiment
     {
       if (event_count % m_eventStep == 0 && event_count > 0)
       {
-        
-        long mem_p = 0, mem_t = 0;
-        try 
-        {
-          m_sizePrinter.reset();
-          mem_p = ((Number) m_sizePrinter.print(m_processor)).longValue();
-          m_sizePrinter.reset();
-          mem_t = ((Number) m_sizePrinter.print(m_tracker)).longValue();
-        } 
-        catch (PrintException e) 
-        {
-          throw new ExperimentException(e);
-        }
-        long total_mem = mem_p + mem_t;
-        max_mem = Math.max(total_mem, max_mem);
-        addReading(event_count, System.currentTimeMillis() - start, total_mem);
+        max_mem = addMemoryReading(event_count, start, max_mem);
         float prog = ((float) event_count) / ((float) source_length);
         setProgression(prog);        
       }
@@ -172,9 +157,33 @@ public class StreamExperiment<T> extends Experiment
       event_count++;
     }
     long end = System.currentTimeMillis();
+    if (event_count < m_eventStep)
+    {
+      max_mem = addMemoryReading(event_count, start, max_mem);
+    }
     write(THROUGHPUT, (1000f * (float) LineageLab.MAX_TRACE_LENGTH) / ((float) (end - start)));
     write(MAX_MEMORY, max_mem);
     write(MEM_PER_EVENT, max_mem / LineageLab.MAX_TRACE_LENGTH);
+  }
+  
+  protected long addMemoryReading(int event_count, long start, long max_mem) throws ExperimentException
+  {
+    long mem_p = 0, mem_t = 0;
+    try
+    {
+      m_sizePrinter.reset();
+      mem_p = ((Number) m_sizePrinter.print(m_processor)).longValue();
+      m_sizePrinter.reset();
+      mem_t = ((Number) m_sizePrinter.print(m_tracker)).longValue();
+    } 
+    catch (PrintException e) 
+    {
+      throw new ExperimentException(e);
+    }
+    long total_mem = mem_p + mem_t;
+    max_mem = Math.max(total_mem, max_mem);
+    addReading(event_count, System.currentTimeMillis() - start, total_mem);
+    return max_mem;
   }
 
   /**
