@@ -22,9 +22,7 @@ compares their throughput and memory consumption.
 The results in this benchmark are discussed in the following publication:
 
 S. Hallé. (2020). *Explainable Queries on Event Logs*. Submitted to
-IEEE World Congress on Computational Intelligence (WCCI) 2020,
-Special Session on Advanced Event-data Analytics Solutions for
-Understanding and Improving Complex Processes (AEA4CP).
+IEEE EDOC 2020.
 
 Instructions on using this archive
 ----------------------------------
